@@ -77,6 +77,13 @@
       color: var(--text);
       text-align: center;
 
+      -moz-appearance: textfield;
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+
       &::placeholder {
         color: inherit;
       }
@@ -163,7 +170,7 @@
     <p>Your score is: <span id="score">asdf</span></p>
     <p>This is guess <span id="attempts"></span> of <span id="maxAttempts"></span></p>
     <p>Round #<span id="round"></span></p>
-    <input type="text" autocomplete="off" placeholder="Put your guess right here!" name="guessInput" id="guessInput">
+    <input type="number" autocomplete="off" placeholder="Put your guess right here!" name="guessInput" id="guessInput">
     <button id="guessBtn" type="submit">Try your luck!</button>
     <button id="start">Start game</button>
     <button id="quit">Quit game</button>
