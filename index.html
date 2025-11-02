@@ -5,13 +5,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A guessing game where the user guesses what the random number is">
-  <title>Secret Number | Guessing Game</title>
+  <title>Secret Number | Guessing Game for Chumps</title>
   <link rel="stylesheet" href="./style.css">
   <script type="module" src="./frontend.js"></script>
 </head>
 
 <body>
-
+  <h1>Guess the Secret Number</h1>
+  <div class="game">
+    <p>Your level is: <span id="level"></span></p>
+    <p>This is guess <span id="attempts"></span> of <span id="totalAttempts"></span></p>
+    <input type="text" name="guessInput" id="guessInput">
+    <p id="response"></p>
+    <p id="debug"></p>
+  </div>
 </body>
 
 </html>
