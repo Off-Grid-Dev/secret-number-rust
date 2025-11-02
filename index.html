@@ -22,15 +22,20 @@
       --bg-button: rgb(3, 3, 20);
       --bg-input: rgb(9, 9, 67);
       --text: rgb(251, 229, 122);
-      --font-fam: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      --toast-pos: rgb(89, 227, 89);
+      --toast-bad: rgb(255, 109, 109);
+      --toast-info: var(--text);
+      --font-fam: system-ui, -apple-system, Ubuntu, sans-serif;
+      --border-rad: 9px;
 
       box-sizing: border-box;
       background-color: var(--bg-body);
       color: var(--text);
       display: grid;
       justify-content: center;
-      padding-block: calc(1rem + 1vw);
+      padding: calc(1rem + 1vw) 1.25rem;
       font-family: var(--font-fam);
+      position: relative;
 
       &.game-off {
 
@@ -63,7 +68,7 @@
     input {
       padding: 1rem 2rem;
       margin-inline: auto;
-      border-radius: 9px;
+      border-radius: var(--border-rad);
       background-color: var(--bg-input);
       border: 2px solid var(--text);
       color: var(--text);
@@ -84,14 +89,62 @@
     button {
       padding: 1rem 2rem;
       margin-inline: auto;
-      border-radius: 9px;
+      border-radius: var(--border-rad);
       background-color: var(--bg-button);
       cursor: pointer;
       border: 2px solid var(--text);
       color: var(--text);
 
       &#start {
-        margin-block-start: 3rem;
+        margin-block-start: 3.75rem;
+      }
+    }
+
+    .toast {
+      padding: 1rem 2rem;
+      position: absolute;
+      border-radius: var(--border-rad);
+      cursor: pointer;
+
+      &.animated {
+        animation: toast 3s ease-in forwards;
+      }
+
+      &.pos {
+        border: 2px solid var(--toast-pos);
+        color: var(--toast-pos);
+      }
+
+      &.bad {
+        border: 2px solid var(--toast-bad);
+        color: var(--toast-bad);
+      }
+
+      &.info {
+        border: 2px solid var(--toast-info);
+        color: var(--toast-info);
+      }
+    }
+
+    @keyframes toast {
+      0% {
+        right: -200px;
+        bottom: 1.5rem;
+      }
+
+      40% {
+        opacity: 1;
+      }
+
+      50% {
+        right: 2rem;
+        bottom: 1.5rem;
+      }
+
+      100% {
+        right: 2rem;
+        bottom: -200px;
+        opacity: 0;
       }
     }
   </style>
@@ -110,6 +163,9 @@
     <button id="start">Start game</button>
     <button id="quit">Quit game</button>
   </div>
+  <div class="toast">
+    <p></p>
+  </div>
 
   <script type="module">
     import init, {
@@ -126,7 +182,7 @@
       const maxAttemptsEl = document.getElementById("maxAttempts");
       const roundEl = document.getElementById("round");
       const guessInputEl = document.getElementById("guessInput");
-      const responseEl = document.getElementById("response");
+      // const responseEl = document.getElementById("response");
       const secretDebugEl = document.getElementById("debug");
       const guessBtnEl = document.getElementById("guessBtn");
       const startBtnEl = document.getElementById("start");
@@ -149,6 +205,7 @@
         attempts = 1;
         secretNumber = pickNewNumber();
         updateGame();
+        showToast("info", "Let's get ready to rumble!");
       }
 
       function checkInput() {
@@ -160,6 +217,11 @@
           if (result === 'match') {
             score += 1;
             nextRound();
+            showToast("pos", "You got it right!");
+          } else if (result === 'less') {
+            showToast("bad", "Too low! Higher.");
+          } else if (result === 'more') {
+            showToast("bad", "Way too high!");
           }
         } else {
           score -= 1;
@@ -180,7 +242,7 @@
         scoreEl.innerText = score;
         attemptsEl.innerText = attempts;
         maxAttemptsEl.innerText = maxAttempts;
-        responseEl.innerText = result ? result : '';
+        // responseEl.innerText = result ? result : '';
         secretDebugEl.innerText = secretNumber;
         roundEl.innerText = round;
 
@@ -195,6 +257,23 @@
         secretNumber = '';
         round = 1;
         updateGame();
+      }
+
+      function showToast(type, message) {
+        const toast = document.querySelector('.toast');
+        const toastText = toast.querySelector('p');
+
+        toastText.innerText = message;
+        toast.classList.add(type);
+        toast.classList.add('animated');
+
+        toast.addEventListener('animationend', resetToast);
+        toast.addEventListener('click', resetToast);
+
+        function resetToast() {
+          toast.className = 'toast';
+          toastText.innerText = '';
+        }
       }
     }
 
