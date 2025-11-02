@@ -1,0 +1,15 @@
+{
+  "name": "secret-number",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "secret_number_bg.wasm",
+    "secret_number.js",
+    "secret_number.d.ts"
+  ],
+  "main": "secret_number.js",
+  "types": "secret_number.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
