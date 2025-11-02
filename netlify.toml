@@ -1,0 +1,26 @@
+# Netlify config for a static WebAssembly app built with wasm-pack
+# Option A (recommended for simplicity): commit the generated `pkg/` folder and deploy as a static site.
+# The publish directory is the repository root that contains index.html and the pkg/ folder.
+[build]
+publish = "."
+
+# Set helpful headers for WASM and JS assets
+[[headers]]
+for = "/pkg/*"
+  [headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/*.wasm"
+  [headers.values]
+  Content-Type = "application/wasm"
+  Cache-Control = "public, max-age=31536000, immutable"
+
+# Optional: If you prefer Netlify to build the WASM for you (Option B),
+# uncomment the section below and remove/adjust the [build] above.
+# This installs Rust + wasm-pack and builds to ./pkg, then publishes the repo root.
+# Be aware this adds several minutes to build time on each deploy.
+#
+# [build]
+# command = "curl https://sh.rustup.rs -sSf | sh -s -- -y && export PATH=$HOME/.cargo/bin:$PATH && rustup default stable && cargo install wasm-pack && wasm-pack build --target web --out-dir pkg"
+# publish = "."
