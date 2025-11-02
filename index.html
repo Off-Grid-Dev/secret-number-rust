@@ -7,18 +7,110 @@
   <meta name="description" content="A guessing game where the user guesses what the random number is">
   <title>Secret Number | Guessing Game for Chumps</title>
   <link rel="stylesheet" href="./style.css">
-  <script type="module" src="./frontend.js"></script>
 </head>
 
 <body>
   <h1>Guess the Secret Number</h1>
   <div class="game">
-    <p>Your level is: <span id="level"></span></p>
-    <p>This is guess <span id="attempts"></span> of <span id="totalAttempts"></span></p>
-    <input type="text" name="guessInput" id="guessInput">
+    <p>Your score is: <span id="score"></span></p>
+    <p>This is guess <span id="attempts"></span> of <span id="maxAttempts"></span></p>
+    <p>Round #<span id="round"></span></p>
+    <div>
+      <input type="text" name="guessInput" id="guessInput">
+      <button id="guessBtn">Try your luck!</button>
+    </div>
     <p id="response"></p>
     <p id="debug"></p>
+    <button id="start">Start game</button>
+    <button id="quit">Quit game</button>
   </div>
+
+  <script type="module">
+    import init, {
+      pick_new_number as pickNewNumber,
+      check_number as checkNumber,
+    } from "./pkg/secret_number.js";
+
+    async function run() {
+      // Initialize wasm
+      await init();
+      // Grab html elements
+      const scoreEl = document.getElementById("score");
+      const attemptsEl = document.getElementById("attempts");
+      const maxAttemptsEl = document.getElementById("maxAttempts");
+      const roundEl = document.getElementById("round");
+      const guessInputEl = document.getElementById("guessInput");
+      const responseEl = document.getElementById("response");
+      const secretDebugEl = document.getElementById("debug");
+      const guessBtnEl = document.getElementById("guessBtn");
+      const startBtnEl = document.getElementById("start");
+      const quitBtnEl = document.getElementById("quit");
+      // add event listeners
+      guessBtnEl.addEventListener("click", checkInput);
+      startBtnEl.addEventListener("click", startGame);
+      quitBtnEl.addEventListener("click", exit);
+      // creating game state
+      let gameOn = false; // TODO add class to body that will show or hide UI elements
+      let secretNumber;
+      let score = 0;
+      let attempts;
+      let maxAttempts = 3;
+      let round = 1;
+      let result;
+
+      function startGame() {
+        gameOn = true;
+        attempts = 1;
+        secretNumber = pickNewNumber();
+        updateGame();
+      }
+
+      function checkInput() {
+        if (attempts < maxAttempts) {
+          attempts += 1;
+          const guess = guessInputEl.value;
+          result = checkNumber(secretNumber, guess);
+          if (result === 'match') {
+            score += 1;
+            nextRound();
+          }
+        } else {
+          score -= 1;
+          nextRound();
+        }
+        updateGame();
+      }
+
+      function nextRound() {
+        attempts = 1;
+        round += 1;
+        result = '';
+        secretNumber = pickNewNumber();
+        updateGame();
+      }
+
+      function updateGame() {
+        scoreEl.innerText = score;
+        attemptsEl.innerText = attempts;
+        maxAttemptsEl.innerText = maxAttempts;
+        responseEl.innerText = result ? result : '';
+        secretDebugEl.innerText = secretNumber;
+        roundEl.innerText = round;
+      }
+
+      function exit() {
+        gameOn = false;
+        score = 0;
+        attempts = 1;
+        result = '';
+        secretNumber = '';
+        updateGame();
+      }
+    }
+
+    run();
+
+  </script>
 </body>
 
 </html>
