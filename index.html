@@ -33,9 +33,11 @@
       color: var(--text);
       display: grid;
       justify-content: center;
+      min-height: 100dvh;
       padding: calc(1rem + 1vw) 1.25rem;
       font-family: var(--font-fam);
       position: relative;
+      overflow: hidden;
 
       &.game-off {
 
@@ -63,6 +65,7 @@
       display: grid;
       gap: 1rem;
       text-align: center;
+      margin-block-end: auto;
     }
 
     input {
@@ -129,20 +132,23 @@
     @keyframes toast {
       0% {
         right: -200px;
-        bottom: 1.5rem;
+        bottom: 1rem;
+        opacity: 0;
       }
 
       40% {
         opacity: 1;
       }
 
-      50% {
-        right: 2rem;
-        bottom: 1.5rem;
+      50%,
+      75% {
+        opacity: 1;
+        right: 4rem;
+        bottom: 1rem;
       }
 
       100% {
-        right: 2rem;
+        right: 4rem;
         bottom: -200px;
         opacity: 0;
       }
@@ -158,8 +164,6 @@
     <p>Round #<span id="round"></span></p>
     <input type="text" autocomplete="off" placeholder="Put your guess right here!" name="guessInput" id="guessInput">
     <button id="guessBtn" type="submit">Try your luck!</button>
-    <p id="response"></p>
-    <p id="debug"></p>
     <button id="start">Start game</button>
     <button id="quit">Quit game</button>
   </div>
@@ -182,8 +186,6 @@
       const maxAttemptsEl = document.getElementById("maxAttempts");
       const roundEl = document.getElementById("round");
       const guessInputEl = document.getElementById("guessInput");
-      // const responseEl = document.getElementById("response");
-      const secretDebugEl = document.getElementById("debug");
       const guessBtnEl = document.getElementById("guessBtn");
       const startBtnEl = document.getElementById("start");
       const quitBtnEl = document.getElementById("quit");
@@ -192,7 +194,8 @@
       startBtnEl.addEventListener("click", startGame);
       quitBtnEl.addEventListener("click", exit);
       // creating game state
-      let gameOn = false; // TODO add class to body that will show or hide UI elements
+      let gameOn = false;
+      // initializing variables
       let secretNumber;
       let score = 0;
       let attempts;
@@ -212,6 +215,7 @@
         const guess = guessInputEl.value;
         if (guess === '') return;
         if (attempts < maxAttempts) {
+          console.log(`I knew you wanted to cheat: ${secretNumber}`)
           attempts += 1;
           result = checkNumber(secretNumber, guess);
           if (result === 'match') {
@@ -225,6 +229,7 @@
           }
         } else {
           score -= 1;
+          showToast('bad', 'Oh no! You lost a point!')
           nextRound();
         }
         updateGame();
@@ -242,10 +247,7 @@
         scoreEl.innerText = score;
         attemptsEl.innerText = attempts;
         maxAttemptsEl.innerText = maxAttempts;
-        // responseEl.innerText = result ? result : '';
-        secretDebugEl.innerText = secretNumber;
         roundEl.innerText = round;
-
         document.body.className = gameOn ? "game-on" : "game-off";
       }
 
