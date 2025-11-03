@@ -245,6 +245,13 @@
       guessBtnEl.addEventListener("click", checkInput);
       startBtnEl.addEventListener("click", startGame);
       quitBtnEl.addEventListener("click", exit);
+      guessInputEl.addEventListener("keydown", (e) => {
+        if (e.key === 'Enter') {
+          if (guessInputEl.value === '') return;
+          checkInput();
+        }
+      })
+
       // creating game state
       let gameOn = false;
       // initializing variables
