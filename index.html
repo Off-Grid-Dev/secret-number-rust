@@ -7,7 +7,7 @@
   <meta name="description" content="A guessing game where the user guesses what the random number is">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="icon" href="favicon-32x32.png" type="image/x-icon">
-  <title>Secret Number | Guessing Game for Chumps</title>
+  <title>Skinny K's Secret Number</title>
   <style>
     *,
     *::before,
@@ -177,6 +177,7 @@
         position: absolute;
         border-radius: var(--border-rad);
         cursor: pointer;
+        background-color: var(--bg-input);
 
         &.animated {
           animation: toast 3s ease-in forwards;
@@ -324,15 +325,19 @@
           }
           if (attempts + 1 > maxAttempts) {
             score -= 1;
-            showToast('bad', 'Oh no! You lost a point!');
             nextRound();
+            setTimeout(() => {
+              showToast('bad', 'Oh no! You lost a point!');
+            }, 490);
             return;
           }
           attempts += 1;
         } else {
           score -= 1;
-          showToast('bad', 'Oh no! You lost a point!');
           nextRound();
+          setTimeout(() => {
+            showToast('bad', 'Oh no! You lost a point!');
+          }, 490);
         }
         updateGame();
       }
