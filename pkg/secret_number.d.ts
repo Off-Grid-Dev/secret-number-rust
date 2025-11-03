@@ -1,5 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
+export function min_value(): number;
+export function max_value(): number;
 export function pick_new_number(): number;
 export function check_number(secret: number, guess: number): string;
 
@@ -7,6 +9,8 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
+  readonly min_value: () => number;
+  readonly max_value: () => number;
   readonly pick_new_number: () => number;
   readonly check_number: (a: number, b: number) => [number, number];
   readonly __wbindgen_exn_store: (a: number) => void;

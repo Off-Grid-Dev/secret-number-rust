@@ -56,6 +56,22 @@ function isLikeNone(x) {
 /**
  * @returns {number}
  */
+export function min_value() {
+    const ret = wasm.min_value();
+    return ret;
+}
+
+/**
+ * @returns {number}
+ */
+export function max_value() {
+    const ret = wasm.max_value();
+    return ret;
+}
+
+/**
+ * @returns {number}
+ */
 export function pick_new_number() {
     const ret = wasm.pick_new_number();
     return ret;

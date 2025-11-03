@@ -7,7 +7,6 @@
   <meta name="description" content="A guessing game where the user guesses what the random number is">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="icon" href="favicon-32x32.png" type="image/x-icon">
-  <link rel="icon" href="favicon-16x16.ico" type="image/x-icon">
   <title>Secret Number | Guessing Game for Chumps</title>
   <style>
     *,
@@ -65,6 +64,10 @@
     h1 {
       font-weight: 500;
       margin-block-end: 2rem;
+
+      span {
+        color: var(--toast-pos);
+      }
     }
 
     .game {
@@ -206,7 +209,7 @@
 
 <body class="game-off">
   <div class="game">
-    <h1>Guess the Secret Number</h1>
+    <h1>Guess the Secret Number between <span id="minNum"></span> and <span id="maxNum"></span></h1>
     <p>Your score is: <span id="score">asdf</span></p>
     <p>This is guess <span id="attempts"></span> of <span id="maxAttempts"></span></p>
     <h2>Your guesses:</h2>
@@ -226,11 +229,16 @@
     import init, {
       pick_new_number as pickNewNumber,
       check_number as checkNumber,
+      min_value as getMinValue,
+      max_value as getMaxValue
     } from "./pkg/secret_number.js";
 
     async function run() {
       // Initialize wasm
       await init();
+      // Get min/max values from wasm-bindgen
+      const minValue = getMinValue();
+      const maxValue = getMaxValue();
       // Grab html elements
       const scoreEl = document.getElementById("score");
       const attemptsEl = document.getElementById("attempts");
@@ -241,6 +249,7 @@
       const startBtnEl = document.getElementById("start");
       const quitBtnEl = document.getElementById("quit");
       const guessListEl = document.getElementById("guessList");
+      const title = document.querySelector("h1");
       // add event listeners
       guessBtnEl.addEventListener("click", checkInput);
       startBtnEl.addEventListener("click", startGame);
@@ -251,7 +260,9 @@
           checkInput();
         }
       })
-
+      // complete game heading
+      document.getElementById('minNum').innerText = minValue;
+      document.getElementById('maxNum').innerText = maxValue;
       // creating game state
       let gameOn = false;
       // initializing variables

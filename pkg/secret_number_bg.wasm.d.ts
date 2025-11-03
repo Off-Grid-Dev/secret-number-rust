@@ -1,6 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
+export const min_value: () => number;
+export const max_value: () => number;
 export const pick_new_number: () => number;
 export const check_number: (a: number, b: number) => [number, number];
 export const __wbindgen_exn_store: (a: number) => void;
