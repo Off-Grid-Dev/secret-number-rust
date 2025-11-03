@@ -12,6 +12,7 @@
     *::after {
       box-sizing: inherit;
       text-decoration: none;
+      list-style: none;
       padding: 0;
       margin: 0;
       font-family: inherit;
@@ -44,6 +45,8 @@
         #quit,
         #guessBtn,
         p,
+        h2,
+        ul,
         input {
           display: none;
         }
@@ -66,6 +69,22 @@
       gap: 1rem;
       text-align: center;
       margin-block-end: auto;
+
+      ul {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        width: fit-content;
+        margin-inline: auto;
+
+        li {
+          border: 2px solid var(--toast-pos);
+          border-radius: var(--border-rad);
+          padding: 3px;
+          display: inline-block;
+          aspect-ratio: 1;
+        }
+      }
     }
 
     input {
@@ -76,6 +95,7 @@
       border: 2px solid var(--text);
       color: var(--text);
       text-align: center;
+      width: 14rem;
 
       -moz-appearance: textfield;
       appearance: textfield;
@@ -109,6 +129,11 @@
 
       &#start {
         margin-block-start: 3.75rem;
+      }
+
+      &#quit {
+        border-color: var(--toast-bad);
+        margin-block-start: 2rem;
       }
     }
 
@@ -170,8 +195,11 @@
     <h1>Guess the Secret Number</h1>
     <p>Your score is: <span id="score">asdf</span></p>
     <p>This is guess <span id="attempts"></span> of <span id="maxAttempts"></span></p>
+    <h2>Your guesses:</h2>
+    <ul id="guessList"></ul>
     <p>Round #<span id="round"></span></p>
-    <input type="number" autocomplete="off" placeholder="Put your guess right here!" name="guessInput" id="guessInput">
+    <input type="number" min="1" max="100" autocomplete="off" placeholder="Put your guess right here!" name="guessInput"
+      id="guessInput">
     <button id="guessBtn" type="submit">Try your luck!</button>
     <button id="start">Start game</button>
     <button id="quit">Quit game</button>
@@ -198,6 +226,7 @@
       const guessBtnEl = document.getElementById("guessBtn");
       const startBtnEl = document.getElementById("start");
       const quitBtnEl = document.getElementById("quit");
+      const guessListEl = document.getElementById("guessList");
       // add event listeners
       guessBtnEl.addEventListener("click", checkInput);
       startBtnEl.addEventListener("click", startGame);
@@ -222,6 +251,7 @@
 
       function checkInput() {
         const guess = guessInputEl.value;
+        addToGuessList(guess, guessListEl);
         if (guess === '') return;
         if (attempts < maxAttempts) {
           console.log(`I knew you wanted to cheat: ${secretNumber}`)
@@ -245,11 +275,18 @@
         updateGame();
       }
 
+      function addToGuessList(guess, parent) {
+        const guessItem = document.createElement('li');
+        guessItem.innerText = guess;
+        parent.appendChild(guessItem);
+      }
+
       function nextRound() {
         attempts = 1;
         round += 1;
         result = '';
         secretNumber = pickNewNumber();
+        guessListEl.innerHTML = '';
         updateGame();
       }
 
