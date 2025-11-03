@@ -17,7 +17,7 @@ pub fn max_value() -> i32 {
 
 #[wasm_bindgen]
 pub fn pick_new_number() -> i32 {
-    // Generate a random number between 1 and 100
+    // Generate a random number between the given "min" and "max" values
     let number = rand::thread_rng().gen_range(MIN_VALUE..=MAX_VALUE);
     number
 }
