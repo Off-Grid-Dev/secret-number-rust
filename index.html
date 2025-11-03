@@ -135,6 +135,17 @@
         border-color: var(--toast-bad);
         margin-block-start: 2rem;
       }
+
+      &:hover,
+      &:focus-visible {
+        scale: 1.02;
+        translate: 0 -2px;
+        transition: ease-in 200ms;
+      }
+
+      &:active {
+        background-color: var(--bg-input);
+      }
     }
 
     .toast {
@@ -252,26 +263,33 @@
       function checkInput() {
         const guess = guessInputEl.value;
         addToGuessList(guess, guessListEl);
+        guessInputEl.value = '';
         if (guess === '') return;
-        if (attempts < maxAttempts) {
+        if (attempts <= maxAttempts) {
           console.log(`I knew you wanted to cheat: ${secretNumber}`)
-          attempts += 1;
           result = checkNumber(secretNumber, guess);
           if (result === 'match') {
             score += 1;
             nextRound();
             showToast("pos", "You got it right!");
+            return;
           } else if (result === 'less') {
             showToast("bad", "Too low! Higher.");
           } else if (result === 'more') {
             showToast("bad", "Way too high!");
           }
+          if (attempts + 1 > maxAttempts) {
+            score -= 1;
+            showToast('bad', 'Oh no! You lost a point!');
+            nextRound();
+            return;
+          }
+          attempts += 1;
         } else {
           score -= 1;
-          showToast('bad', 'Oh no! You lost a point!')
+          showToast('bad', 'Oh no! You lost a point!');
           nextRound();
         }
-        guessInputEl.value = '';
         updateGame();
       }
 
