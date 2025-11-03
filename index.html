@@ -25,6 +25,7 @@
       --bg-button: rgb(3, 3, 20);
       --bg-input: rgb(9, 9, 67);
       --text: rgb(251, 229, 122);
+      --shadow: rgb(188, 255, 179);
       --toast-pos: rgb(89, 227, 89);
       --toast-bad: rgb(255, 109, 109);
       --toast-info: var(--text);
@@ -40,14 +41,14 @@
       padding: calc(1rem + 1vw) 1.25rem;
       font-family: var(--font-fam);
       position: relative;
-      overflow: hidden;
+      /* isolation: isolate; */
 
       &.game-off {
 
         #quit,
         #guessBtn,
         p,
-        h2,
+        h3,
         ul,
         input {
           display: none;
@@ -61,9 +62,9 @@
       }
     }
 
-    h1 {
-      font-weight: 500;
-      margin-block-end: 2rem;
+    h2 {
+      margin-block-end: 1.25rem;
+      font-weight: 400;
 
       span {
         color: var(--toast-pos);
@@ -102,9 +103,10 @@
       color: var(--text);
       text-align: center;
       width: 14rem;
-
       -moz-appearance: textfield;
       appearance: textfield;
+      outline: 1px solid transparent;
+      outline-offset: 2px;
 
       &::-webkit-outer-spin-button,
       &::-webkit-inner-spin-button {
@@ -113,6 +115,15 @@
 
       &::placeholder {
         color: inherit;
+      }
+
+      &:focus {
+        outline-color: var(--shadow);
+        transition: 280ms ease-in-out;
+
+        &::placeholder {
+          color: transparent;
+        }
       }
     }
 
@@ -139,7 +150,7 @@
 
       &#quit {
         border-color: var(--toast-bad);
-        margin-block-start: 2rem;
+        /* margin-block-start: 1rem; */
       }
 
       &:hover,
@@ -154,29 +165,37 @@
       }
     }
 
-    .toast {
-      padding: 1rem 2rem;
+    .toast-container {
       position: absolute;
-      border-radius: var(--border-rad);
-      cursor: pointer;
+      inset: 0;
+      outline: 1px solid pink;
+      z-index: -1;
+      overflow: hidden;
 
-      &.animated {
-        animation: toast 3s ease-in forwards;
-      }
+      .toast {
+        padding: 1rem 2rem;
+        position: absolute;
+        border-radius: var(--border-rad);
+        cursor: pointer;
 
-      &.pos {
-        border: 2px solid var(--toast-pos);
-        color: var(--toast-pos);
-      }
+        &.animated {
+          animation: toast 3s ease-in forwards;
+        }
 
-      &.bad {
-        border: 2px solid var(--toast-bad);
-        color: var(--toast-bad);
-      }
+        &.pos {
+          border: 2px solid var(--toast-pos);
+          color: var(--toast-pos);
+        }
 
-      &.info {
-        border: 2px solid var(--toast-info);
-        color: var(--toast-info);
+        &.bad {
+          border: 2px solid var(--toast-bad);
+          color: var(--toast-bad);
+        }
+
+        &.info {
+          border: 2px solid var(--toast-info);
+          color: var(--toast-info);
+        }
       }
     }
 
@@ -192,16 +211,18 @@
       }
 
       50%,
-      75% {
+      85% {
         opacity: 1;
-        right: 4rem;
+        right: calc(50vw - 8.5rem);
         bottom: 1rem;
+        rotate: 0deg;
       }
 
       100% {
-        right: 4rem;
+        right: calc(50vw - 3rem);
         bottom: -200px;
         opacity: 0;
+        rotate: -70deg;
       }
     }
   </style>
@@ -209,10 +230,11 @@
 
 <body class="game-off">
   <div class="game">
-    <h1>Guess the Secret Number between <span id="minNum"></span> and <span id="maxNum"></span></h1>
+    <h1>Skinny Guessing Game</h1>
+    <h2>Guess the Secret Number between <span id="minNum"></span> and <span id="maxNum"></span></h2>
     <p>Your score is: <span id="score">asdf</span></p>
     <p>This is guess <span id="attempts"></span> of <span id="maxAttempts"></span></p>
-    <h2>Your guesses:</h2>
+    <h3>Your guesses:</h3>
     <ul id="guessList"></ul>
     <p>Round #<span id="round"></span></p>
     <input type="number" min="1" max="100" autocomplete="off" placeholder="Put your guess right here!" name="guessInput"
@@ -221,8 +243,7 @@
     <button id="start">Start game</button>
     <button id="quit">Quit game</button>
   </div>
-  <div class="toast">
-    <p></p>
+  <div class="toast-container">
   </div>
 
   <script type="module">
@@ -249,7 +270,8 @@
       const startBtnEl = document.getElementById("start");
       const quitBtnEl = document.getElementById("quit");
       const guessListEl = document.getElementById("guessList");
-      const title = document.querySelector("h1");
+      const toastContainer = document.querySelector(".toast-container");
+      console.log(toastContainer);
       // add event listeners
       guessBtnEl.addEventListener("click", checkInput);
       startBtnEl.addEventListener("click", startGame);
@@ -283,21 +305,22 @@
 
       function checkInput() {
         const guess = guessInputEl.value;
-        addToGuessList(guess, guessListEl);
         guessInputEl.value = '';
         if (guess === '') return;
+        addToGuessList(guess, guessListEl);
         if (attempts <= maxAttempts) {
-          console.log(`I knew you wanted to cheat: ${secretNumber}`)
           result = checkNumber(secretNumber, guess);
           if (result === 'match') {
             score += 1;
             nextRound();
-            showToast("pos", "You got it right!");
+            showToast("pos", `You got it right! Round #${round}`);
             return;
           } else if (result === 'less') {
             showToast("bad", "Too low! Higher.");
+            console.log(`I knew you wanted to cheat: ${secretNumber}`)
           } else if (result === 'more') {
             showToast("bad", "Way too high!");
+            console.log(`I knew you wanted to cheat: ${secretNumber}`)
           }
           if (attempts + 1 > maxAttempts) {
             score -= 1;
@@ -348,19 +371,22 @@
       }
 
       function showToast(type, message) {
-        const toast = document.querySelector('.toast');
-        const toastText = toast.querySelector('p');
+        const toastEl = document.createElement('div');
+        toastEl.className = 'toast';
+        const toastText = document.createElement('p');
+        toastEl.appendChild(toastText);
+        toastContainer.appendChild(toastEl);
+        console.log("toast added!");
 
         toastText.innerText = message;
-        toast.classList.add(type);
-        toast.classList.add('animated');
+        toastEl.classList.add(type);
+        toastEl.classList.add('animated');
 
-        toast.addEventListener('animationend', resetToast);
-        toast.addEventListener('click', resetToast);
+        toastEl.addEventListener('animationend', removeToast);
+        toastEl.addEventListener('click', removeToast);
 
-        function resetToast() {
-          toast.className = 'toast';
-          toastText.innerText = '';
+        function removeToast() {
+          toastEl.remove;
         }
       }
     }
